@@ -43,4 +43,51 @@ export class AccountBusiness {
 
     }
 
+    public createAccount = async (input: any) => {
+
+        const { id, ownerId } = input
+
+        if (typeof id !== "string") {
+            throw new Error("'id' deve ser string")
+        }
+
+        if (typeof ownerId !== "string") {
+            throw new Error("'ownerId' deve ser string")
+        }
+
+        const accountDatabase = new AccountDatabase()
+        const accountDBExists = await accountDatabase.findAccountById(id)
+
+        if (accountDBExists) {
+            throw new Error("'id' já existe")
+        }
+
+        const newAccount = new Account(
+            id,
+            0,
+            ownerId,
+            new Date().toISOString()
+        )
+
+        const newAccountDB: AccountDB = {
+            id: newAccount.getId(),
+            balance: newAccount.getBalance(),
+            owner_id: newAccount.getOwnerId(),
+            created_at: newAccount.getCreatedAt()
+        }
+
+        await accountDatabase.insertAccount(newAccountDB)
+
+        const output = {
+            message: "Conta cadastrada com sucesso",
+            account: newAccount
+        }
+
+        return output
+    }
+
+    public editAccountBalance = async () => {
+
+    }
+
 }
