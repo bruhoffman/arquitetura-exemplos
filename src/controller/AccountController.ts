@@ -54,43 +54,16 @@ export class AccountController {
 
     public createAccount = async (req: Request, res: Response) => {
         try {
-            const { id, ownerId } = req.body
-
-            if (typeof id !== "string") {
-                res.status(400)
-                throw new Error("'id' deve ser string")
+            const input = {
+                id: req.body.id,
+                owner: req.body.ownerId
             }
 
-            if (typeof ownerId !== "string") {
-                res.status(400)
-                throw new Error("'ownerId' deve ser string")
-            }
+            const accoutnBusiness = new AccountBusiness()
+            const output = await accoutnBusiness.createAccount(input)
 
-            const accountDatabase = new AccountDatabase()
-            const accountDBExists = await accountDatabase.findAccountById(id)
+            res.status(201).send(output)
 
-            if (accountDBExists) {
-                res.status(400)
-                throw new Error("'id' já existe")
-            }
-
-            const newAccount = new Account(
-                id,
-                0,
-                ownerId,
-                new Date().toISOString()
-            )
-
-            const newAccountDB: AccountDB = {
-                id: newAccount.getId(),
-                balance: newAccount.getBalance(),
-                owner_id: newAccount.getOwnerId(),
-                created_at: newAccount.getCreatedAt()
-            }
-
-            await accountDatabase.insertAccount(newAccountDB)
-
-            res.status(201).send(newAccount)
         } catch (error) {
             console.log(error)
 

@@ -17,3 +17,12 @@ Content-Type: application/json
     "password": "321654"
 }
 ###
+
+POST http://localhost:3003/accounts
+Content-Type: application/json
+
+{
+    "id": "a004",
+    "ownerId": "u004"
+}
+###
