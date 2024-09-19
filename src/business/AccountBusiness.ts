@@ -86,7 +86,39 @@ export class AccountBusiness {
         return output
     }
 
-    public editAccountBalance = async () => {
+    public editAccountBalance = async (input: any) => {
+
+        const { id, value } = input
+
+        if (typeof value !== "number") {
+            throw new Error("'value' deve ser number")
+        }
+
+        const accountDatabase = new AccountDatabase()
+        const accountDB = await accountDatabase.findAccountById(id)
+
+        if (!accountDB) {
+            throw new Error("'id' não encontrado")
+        }
+
+        const account = new Account(
+            accountDB.id,
+            accountDB.balance,
+            accountDB.owner_id,
+            accountDB.created_at
+        )
+
+        const newBalance = account.getBalance() + value
+        account.setBalance(newBalance)
+
+        await accountDatabase.updateBalanceById(id, newBalance)
+
+        const output = {
+            message: "Saldo atualizado com sucesso!",
+            balance: account.getBalance()
+        }
+
+        return output
 
     }
 
