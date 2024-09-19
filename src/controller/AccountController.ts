@@ -56,11 +56,11 @@ export class AccountController {
         try {
             const input = {
                 id: req.body.id,
-                owner: req.body.ownerId
+                ownerId: req.body.ownerId
             }
 
-            const accoutnBusiness = new AccountBusiness()
-            const output = await accoutnBusiness.createAccount(input)
+            const accountBusiness = new AccountBusiness()
+            const output = await accountBusiness.createAccount(input)
 
             res.status(201).send(output)
 
@@ -81,35 +81,15 @@ export class AccountController {
 
     public editAccountBalance = async (req: Request, res: Response) => {
         try {
-            const id = req.params.id
-            const value = req.body.value
-
-            if (typeof value !== "number") {
-                res.status(400)
-                throw new Error("'value' deve ser number")
+            const input = {
+                id: req.params.id,
+                value: req.body.value
             }
 
-            const accountDatabase = new AccountDatabase()
-            const accountDB = await accountDatabase.findAccountById(id)
+            const accountBusiness = new AccountBusiness()
+            const output = await accountBusiness.editAccountBalance(input)
 
-            if (!accountDB) {
-                res.status(404)
-                throw new Error("'id' não encontrado")
-            }
-
-            const account = new Account(
-                accountDB.id,
-                accountDB.balance,
-                accountDB.owner_id,
-                accountDB.created_at
-            )
-
-            const newBalance = account.getBalance() + value
-            account.setBalance(newBalance)
-
-            await accountDatabase.updateBalanceById(id, newBalance)
-
-            res.status(200).send(account)
+            res.status(200).send(output)
         } catch (error) {
             console.log(error)
 
